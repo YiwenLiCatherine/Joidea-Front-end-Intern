@@ -1,0 +1,166 @@
+node_modules作用：
+
+  node_modules是安装node后用来存放用包管理工具下载安装的包的文件夹。
+  yarn/npm install执行完成后，可以在node_modules中看到所有依赖的包
+  坏处：
+  - 每次都需要安装依赖，费流量，网速慢费时间
+  - 浪费磁盘空间，每个node_modules中包含的工具很多，动辄20M
+  好处：
+  - 使用package.json安装好之后，node_modules文件夹中没有版本信息， 从而package.json可以删掉
+  - 移动/复制/打包项目比较简答，对于开发，部署都有好处
+
+
+
+package.json 作用
+npm在package.json文件中管理项目的依赖项和元数据
+node执行js中require的时候，也会根据package.json中的依赖项查找
+
+package.json在npm中用的比较多
+package.json是什么
+每个项目的根目录下面，一般都有一个package.json文件，定义了这个项目所需要的各种模块，以及项目的配置信息
+（比如名称、版本、许可证等元数据）。npm install命令根据这个配置文件，自动下载所需的模块，也就是配置项目所需的运行和开发环境。
+
+下面是一个最简单的package.json文件，只定义两项元数据：项目名称和项目版本。
+package.json文件就是一个JSON对象，该对象的每一个成员就是当前项目的一项设置。比如name就是项目名称，version是版本（遵守“大版本.次要版本.小版本”的格式）。
+
+package.json配置说明
+下面就以我的博客项目的package.json文件的配置作一个简单的说明，分为必须字段和可选字段
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+必须字段
+1.Name
+项目名称
+
+全部小写，没有空格，可以使用下划线或者横线
+
+2.Version
+项目版本号
+
+x.x.x 的格式
+符合“语义化版本规则”
+
+可选字段
+1.title
+标题
+2.author
+author是一个人，contributors是一组人。格式设置如下：
+
+{ “name” : “wblearn” 
+, “email” : “1275660493@qq.com” 
+, “url” : “[https://wblearn.github.io](https://wblearn.github.io)” 
+}
+也可以像我博客中的格式一样：
+
+"author": "Wblearn <1275660493@qq.com>",
+3.homepage
+项目url主页
+
+4.repository
+用于指示代码存放的位置。
+
+"repository": {
+        "type": "git",
+        "url": "https://github.com/wblearn/wblearn.github.io"
+    }
+>"repository": {
+        "type": "svn",
+        "url": "https://github.com/wblearn/wblearn.github.io"
+    }
+5.bugs
+问题追踪系统的URL或邮箱地址；npm bugs用的上。比如我的
+
+"bugs": "https://github.com/wblearn/wblearn.github.io/issues"
+6.devDependencies
+指定项目开发所需要的模块，如果只需要下载使用某些模块，而不下载这些模块的测试和文档框架，放在这个下面比较不错。
+
+"devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-less": "~0.11.4",
+        "grunt-contrib-watch": "~0.6.1",
+        "grunt-banner": "~0.2.3",
+        "grunt-contrib-uglify": "~0.5.1"
+    }
+7.scripts
+object
+Key是生命周期事件名，value是在事件点要跑的命令。参考npm-scripts。
+scripts指定了运行脚本命令的npm命令行缩写，比如push指定了运行npm run push时，所要执行的命令。
+下面的设置指定了npm run preview、npm run watch、npm run push、npm run cafe时，所要执行的命令。
+
+"scripts": {
+        "preview": "cd _site; python -m SimpleHTTPServer 8020",
+        "py3view": "cd _site; python3 -m http.server 8020",
+        "watch"  : "grunt watch & npm run preview & jekyll serve -w",
+        "py3wa"  : "grunt watch & npm run py3view & jekyll serve -w",
+        "boil"   : "git push boilerplate boilerplate:master",
+        "push"   : "git push origin master --tag",
+        "cafe"   : "git co gitcafe-pages; git merge master; git push gitcafe gitcafe-pages:gitcafe-pages --tag; git co master;"
+    }
+其它字段
+1.Dependencies
+指示当前包所依赖的其他包。
+
+{ "dependencies" :
+  { "foo" : "1.0.0 - 2.9999.9999"
+  , "bar" : ">=1.0.2 <2.1.2"
+  , "baz" : ">1.0.2 <=2.3.4"
+  , "boo" : "2.0.1"
+  , "qux" : "<1.0.0 || >=2.3.1 <2.4.5 || >=2.5.2 <3.0.0"
+  , "asd" : "http://asdf.com/asdf.tar.gz"
+  , "til" : "~1.2"
+  , "elf" : "~1.2.3"
+  , "two" : "2.x"
+  , "thr" : "3.3.x"
+  }
+}
+版本格式可以是下面任一种：
+
+ersion 完全匹配
+>version 大于这个版本
+>=version大于或等于这个版本
+<version
+<=version
+~version 非常接近这个版本
+^version 与当前版本兼容
+1.2.x X代表任意数字，因此1.2.1, 1.2.3等都可以
+http://... Unix系统下使用的tarball的URL。
+* 任何版本都可以
+""任何版本都可以
+version1 - version2 等价于 >=version1 <=version2.
+range1 || range2 满足任意一个即可
+git... Git地址
+user/repo
+2.License
+授权方式，如果是使用一个普遍的license，比如BSD-3-Clause或MIT，直接使用：
+
+{ "license" : "BSD-3-Clause" }
+3.main
+main字段指定了加载的入口文件，require('moduleName')就会加载这个文件。这个字段的默认值是模块根目录下面的index.js。
+
+4.Config
+object
+Config对象中的值在Scripts的整个周期中皆可用，专门用于给Scripts提供配置参数。
+
+5.Keywords
+字符串数组。人们使用 npm search 搜索时发现你的项目
+
+6.Description
+必须是字符串。npm search的时候会用到。
+
+7.Bin
+bin项用来指定各个内部命令对应的可执行文件的位置。很多的包都会有执行文件需要安装到PATH中去。
+这个字段对应的是一个Map，每个元素对应一个{ 命令名：文件名 }。
+{ "bin" : { "npm" : "./cli.js" } }
+
+8.Engines
+engines字段指明了该模块运行的平台，比如 Node 的某个版本或者浏览器
+既可以指定node版本：
+{ "engines" : {"node" : ">=0.10.3 <0.12" } }
+也可以指定npm版本：
+{ "engines" : {"npm" : "~1.0.20" } }
+
+作者：wblearn
+链接：https://www.jianshu.com/p/bcd085349391
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
